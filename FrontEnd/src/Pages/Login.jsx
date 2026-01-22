@@ -1,11 +1,13 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import { motion } from "framer-motion";
 import { Lock } from "lucide-react";
 import { useTheme } from "../context/ThemeContext";
 import axios from "axios";
 import { toast } from 'react-toastify';
 
-export default function AuthTravelShare({ setToken }) {
+export default function AuthTravelShare() {
     const backendurl = import.meta.env.VITE_BACKEND_URL;
     const { isDark } = useTheme();
     const [mode, setMode] = useState("login"); // 'signup' or 'login'
@@ -15,6 +17,9 @@ export default function AuthTravelShare({ setToken }) {
         password: "",
     });
     const [loading, setLoading] = useState(false);
+
+    const { login } = useAuth();
+    const navigate = useNavigate();
 
     // ✅ Input Change
     const handleChange = (e) => {
@@ -42,11 +47,9 @@ export default function AuthTravelShare({ setToken }) {
                     toast.success(response.data.message);
                     setMode("login");
                 } else {
-                    toast.success("Login successful! Please wait...");
-                    setToken(response.data.token);
-                    localStorage.setItem("token", response.data.token);
-                    localStorage.setItem("user", JSON.stringify(response.data.user));
-                    window.location.href = "/"; // Redirect
+                    toast.success("Login successful!");
+                    login(response.data.token, response.data.user);
+                    navigate("/"); // Redirect
                 }
             } else {
                 toast.error(response.data.message)

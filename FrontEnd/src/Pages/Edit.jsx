@@ -3,15 +3,17 @@ import { useParams, useNavigate, NavLink } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowLeft, Upload } from "lucide-react";
 import { useTheme, ThemeContext } from "../context/ThemeContext";
+import { useAuth } from "../context/AuthContext";
 import { toast } from "react-toastify";
 import axios from "axios";
 
-export default function EditListingForm({ token }) {
+export default function EditListingForm() {
     const backendurl = import.meta.env.VITE_BACKEND_URL;
     const { isDark } = useTheme();
     const { getlistingData } = useContext(ThemeContext); // refresh listings after edit
     const { listId } = useParams();
     const navigate = useNavigate();
+    const { token } = useAuth();
 
     const [form, setForm] = useState({
         title: "",
@@ -32,7 +34,7 @@ export default function EditListingForm({ token }) {
     useEffect(() => {
         const fetchListing = async () => {
             try {
-                const res = await axios.get( backendurl+ `/api/listing/${listId}`);
+                const res = await axios.get(backendurl + `/api/listing/${listId}`);
                 const data = res.data;
                 setForm({
                     title: data.title,

@@ -1,24 +1,18 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
+import { useAuth } from "../context/AuthContext";
 import { Sun, Moon, Menu, MapPinPlus } from "lucide-react";
 
 const Navbar = () => {
     const [visible, setVisible] = useState(false);
     const { isDark, toggleTheme } = useTheme();
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const { isAuthenticated, logout } = useAuth();
 
     // const navigate = useNavigate();
 
-    useEffect(() => {
-        // Check login status from localStorage or any auth token
-        const token = localStorage.getItem("token");
-        setIsLoggedIn(!!token);
-    }, []);
-
     const handleLogout = () => {
-        localStorage.removeItem("token");
-        setIsLoggedIn(false);
+        logout();
         // navigate("/login");
     };
 
@@ -71,7 +65,7 @@ const Navbar = () => {
                 </button>
 
                 {/* Login Button */}
-                {isLoggedIn ? (
+                {isAuthenticated ? (
                     <button
                         onClick={handleLogout}
                         className="px-5 py-2 border border-gray-600 rounded hover:bg-black hover:text-white transition cursor-pointer"
@@ -84,7 +78,7 @@ const Navbar = () => {
                             to="/login"
                             className="px-5 py-2 border border-gray-600 rounded hover:bg-black hover:text-white transition cursor-pointer"
                         >
-                            Login
+                            SignIn
                         </NavLink>
                         <NavLink to="/login" className={` px-5 py-2 ${isDark ? "bg-red-700 text-white" : ""}
 
@@ -147,7 +141,7 @@ const Navbar = () => {
                             {item}
                         </NavLink>
                     ))}
-                    {isLoggedIn ? (
+                    {isAuthenticated ? (
                         <p
                             onClick={handleLogout}
                             className="py-2 hover:text-blue-500"

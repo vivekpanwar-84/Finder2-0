@@ -43,6 +43,7 @@ export const getReviews = async (req, res) => {
     if (!listingId) return res.status(400).json({ success: false, message: "Listing ID missing" });
 
     const reviews = await Review.find({ listing: listingId }).populate("author", "name");
+    
     res.json({ success: true, reviews });
   } catch (error) {
     console.error("Get Reviews Error:", error);

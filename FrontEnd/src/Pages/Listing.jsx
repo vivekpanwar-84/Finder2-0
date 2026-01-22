@@ -1,6 +1,7 @@
 import React, { useContext, useState, useEffect } from "react";
 import { useParams, useNavigate, NavLink } from "react-router-dom";
 import { ThemeContext, useTheme } from "../context/ThemeContext";
+import { useAuth } from "../context/AuthContext";
 import { MapPin, Layers, Star, Earth, UserRoundPen } from "lucide-react";
 import Comment from "../components/Comment";
 import axios from "axios";
@@ -14,10 +15,8 @@ const Listing = () => {
   const navigate = useNavigate();
   const [data, setData] = useState(null);
   const { isDark, getlistingData } = useTheme();
+  const { user, token } = useAuth();
   const [averageRating, setAverageRating] = useState(0);
-  const [currentUserId, setCurrentUserId] = useState(null);
-  // const [user, setUser] = useState(null);
-  const [ownerid, setOwnerId] = useState(null);
   const [mainImage, setMainImage] = useState("");
   const backendurl = import.meta.env.VITE_BACKEND_URL;
 
@@ -30,39 +29,22 @@ const Listing = () => {
     }
   }, [listId, demoData]);
 
-  // Get current user ID from localStorage
-  useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user"));
-    if (user && user._id) setCurrentUserId(user._id);
-
-    // setUser(user.name)
-    // console.log("Current User ID:", user.name);
-  }, []);
-
-  // useEffect(() => {
-  //   console.log("Listing Owner ID:", data.owner._id);
-  //   setOwnerId(data.owner._id || null);
-  // }, [data]);
-
-  // console.log("Current User ID:", currentUserId);
-
   //  Compute average rating whenever data changes
   useEffect(() => {
     if (data && data.reviews && data.reviews.length > 0) {
       const ratings = data.reviews.map((r) => r.rating || 0);
       const avg = ratings.reduce((sum, r) => sum + r, 0) / ratings.length;
       setAverageRating(Math.round(avg * 2) / 2);
-      // console.log("Listing Owner ID:", data.owner._id);
     } else {
       setAverageRating(0);
     }
-  }, [data,]);
+  }, [data]);
 
 
   const handleDelete = async (deleteId) => {
     try {
       const res = await axios.delete(backendurl + `/api/listing/${deleteId}`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        headers: { Authorization: `Bearer ${token}` },
       });
       if (res.data.success) {
         toast.success("Listing deleted successfully!");
@@ -178,7 +160,7 @@ const Listing = () => {
           {/* 📝 Description */}
           <p className="mt-6 overflow-auto leading-relaxed max-w-3xl">{data.description}</p>
 
-          {data?.owner && currentUserId === data.owner._id ? (
+          {data?.owner && user?._id === data.owner._id ? (
             <div>
               <div className="flex gap-4">
                 <NavLink to={`/listing/${listId}/Edit`} className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
@@ -189,9 +171,7 @@ const Listing = () => {
                 </button>
               </div>
             </div>
-          ) : (
-            ""
-          )}
+          ) : null}
 
 
 

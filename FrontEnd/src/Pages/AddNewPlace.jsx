@@ -3,12 +3,14 @@ import { motion } from "framer-motion";
 import { ArrowLeft, Upload } from "lucide-react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
+import { useAuth } from "../context/AuthContext";
 import axios from "axios";
 import { toast } from 'react-toastify';
 
 
-export default function AddListingForm({ token }) {
+export default function AddListingForm() {
     const { isDark, getlistingData } = useTheme();
+    const { token } = useAuth();
     const backendurl = import.meta.env.VITE_BACKEND_URL;
     const navigate = useNavigate();
     const [form, setForm] = useState({
