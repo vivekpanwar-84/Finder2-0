@@ -31,7 +31,7 @@ const MainApp = () => {
     <div className="flex">
       <ToastContainer />
       <Navbar />
-      <div className={`flex-1 w-full sm:ml-64 min-h-screen transition-all duration-300 ${isDark ? "bg-gray-900 text-white" : "bg-gray-50 text-gray-900"}`}>
+      <div className={`flex-1 w-full sm:ml-64 min-h-screen pt-20 sm:pt-0 transition-all duration-300 ${isDark ? "bg-gray-900 text-white" : "bg-gray-50 text-gray-900"}`}>
         <Routes>
           <Route path='/' element={<Home />} />
           <Route path='/listing' element={<Listings />} />
