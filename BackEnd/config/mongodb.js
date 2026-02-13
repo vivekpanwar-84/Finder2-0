@@ -13,10 +13,7 @@ connectDB().then(() => {
 
 
 async function connectDB() {
-    await mongoose.connect(DBURL, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-    });
+    await mongoose.connect(DBURL);
 };
 
 export default connectDB;
