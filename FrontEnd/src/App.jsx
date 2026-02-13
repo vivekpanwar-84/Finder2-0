@@ -11,7 +11,8 @@ import { ToastContainer, toast } from 'react-toastify';
 import { useTheme } from "./context/ThemeContext";
 import AddNewPlace from './Pages/AddNewPlace'
 import Profile from './Pages/Profile'
-import { useEffect, useState } from 'react'
+import NotFound from './Pages/NotFound'
+
 import { AuthProvider } from './context/AuthContext';
 
 
@@ -42,6 +43,7 @@ const MainApp = () => {
           <Route path='/listing/:listId/edit' element={<EditListing />} />
           <Route path='/addNewPlace' element={<AddNewPlace />} />
           <Route path='/profile' element={<Profile />} />
+          <Route path='*' element={<NotFound />} />
         </Routes>
       </div>
     </div>
