@@ -29,11 +29,19 @@ app.use("/api/listing", listingRoute);
 app.use("/api/review", reviewRoutes);
 
 
+import path from 'path';
+
+const __dirname = path.resolve();
+
 app.listen(port, () => {
     console.log(`server start....${port}`);
 });
 
+// Serve static files from the frontend dist folder
+app.use(express.static(path.join(__dirname, '../FrontEnd/dist')));
+
+// Handle React routing, return all requests to React app
 app.get('*', (req, res) => {
-    res.send('API is running....');
+    res.sendFile(path.join(__dirname, '../FrontEnd/dist', 'index.html'));
 });
 
