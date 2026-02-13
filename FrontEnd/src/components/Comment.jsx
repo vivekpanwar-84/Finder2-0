@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useTheme } from "../context/ThemeContext";
@@ -6,16 +7,21 @@ import { motion } from "framer-motion";
 import { toast } from "react-toastify";
 import { useContext } from "react";
 import { ThemeContext } from "../context/ThemeContext";
-
+import ConfirmModal from "./ConfirmModal";
+import { useAuth } from "../context/AuthContext";
 
 export default function Comment({ listingId }) {
     const { getlistingData } = useContext(ThemeContext);
     const { isDark } = useTheme();
+    const { user } = useAuth(); // Use useAuth for user context consistency
+
     const [reviews, setReviews] = useState([]);
     const [loading, setLoading] = useState(true);
     const [currentUserId, setCurrentUserId] = useState(null);
     const [rating, setRating] = useState("");
     const [review, setReview] = useState("");
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [reviewToDelete, setReviewToDelete] = useState(null);
     const maxChars = 500;
 
     const backendurl = import.meta.env.VITE_BACKEND_URL;
@@ -32,11 +38,12 @@ export default function Comment({ listingId }) {
         }
     };
 
-
     useEffect(() => {
-        const user = JSON.parse(localStorage.getItem("user"));
-        if (user && user._id) setCurrentUserId(user._id);
-    }, []);
+        // Fallback to localStorage if useAuth doesn't provide it immediately or for consistency
+        const storedUser = JSON.parse(localStorage.getItem("user"));
+        if (storedUser && storedUser._id) setCurrentUserId(storedUser._id);
+        else if (user && user._id) setCurrentUserId(user._id);
+    }, [user]);
 
 
     const handleDelete = async (reviewId) => {
@@ -58,7 +65,7 @@ export default function Comment({ listingId }) {
         if (listingId) fetchReviews();
     }, [listingId]);
 
-    if (loading) return <p>Loading reviews...</p>;
+
 
     // add review submission form here
     const handleSubmit = async (e) => {
@@ -185,7 +192,8 @@ export default function Comment({ listingId }) {
         {/* form End  */}
 
         <div className="space-y-4">
-            {reviews.length === 0 && <p>No reviews yet.</p>}
+            {loading && <p className="text-gray-500 animate-pulse">Loading reviews...</p>}
+            {!loading && reviews.length === 0 && <p>No reviews yet.</p>}
             {reviews.map((review) => (
                 <motion.div
                     key={review._id}
@@ -203,14 +211,39 @@ export default function Comment({ listingId }) {
                         <p className="text-sm">{review.comment}</p>
                         <p className="text-xs text-gray-400 mt-1">{new Date(review.createdAt).toLocaleString()}</p>
                     </div>
+                    {/* Only show delete button if current user is the author */}
                     {review.author._id === currentUserId && (
-                        <button onClick={() => handleDelete(review._id)} className="text-red-500   hover:text-red-700 ml-4">
+                        <button
+                            onClick={() => {
+                                setReviewToDelete(review._id);
+                                setShowDeleteModal(true);
+                            }}
+                            className="text-red-500 hover:text-red-700 ml-4 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+                        >
                             <Trash2 size={20} />
                         </button>
                     )}
                 </motion.div>
             ))}
         </div>
+
+        <ConfirmModal
+            isOpen={showDeleteModal}
+            onClose={() => {
+                setShowDeleteModal(false);
+                setReviewToDelete(null);
+            }}
+            onConfirm={() => {
+                if (reviewToDelete) {
+                    handleDelete(reviewToDelete);
+                }
+                setShowDeleteModal(false);
+                setReviewToDelete(null);
+            }}
+            title="Delete Review?"
+            message="Are you sure you want to delete your review? This action cannot be undone."
+            isDark={isDark}
+        />
     </>
     );
 }

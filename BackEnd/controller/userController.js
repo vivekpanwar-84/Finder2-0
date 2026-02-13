@@ -65,7 +65,7 @@ const registeruser = async (req, res) => {
             return res.status(400).json({ success: false, message: "Invalid email" });
         }
         if (password.length < 8) {
-            return res.status(400).json({ success: false, message: "Password must be at least 6 characters" });
+            return res.status(400).json({ success: false, message: "Password must be at least 8 characters" });
         }
         if (!name) {
             return res.status(400).json({ success: false, message: "Name is required" });
@@ -96,4 +96,20 @@ const registeruser = async (req, res) => {
 
 
 
-export { loginuser, registeruser };
+//***************get user profile
+const getProfile = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const user = await userModel.findById(userId).select('-password');
+
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
+
+        res.json({ success: true, user });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+}
+
+export { loginuser, registeruser, getProfile };

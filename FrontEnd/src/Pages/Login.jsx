@@ -30,6 +30,13 @@ export default function AuthTravelShare() {
     // ✅ Submit Function using Axios
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        // Frontend Validation
+        if (mode === 'signup' && form.password.length < 8) {
+            toast.error("Password must be at least 8 characters");
+            return;
+        }
+
         setLoading(true);
 
         const url =
@@ -80,7 +87,7 @@ export default function AuthTravelShare() {
                 {/* Mode Toggle */}
                 <div className="flex justify-center mb-6">
                     <div
-                        className={`flex w-full max-w-[280px] rounded-xl border ${isDark
+                        className={`flex w-full text-white max-w-[280px] rounded-xl border ${isDark
                             ? "border-gray-700 bg-[#1b2437]"
                             : "border-gray-200 bg-gray-100"
                             }`}

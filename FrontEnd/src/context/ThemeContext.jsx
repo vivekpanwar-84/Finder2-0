@@ -12,6 +12,8 @@ export const ThemeProvider = ({ children }) => {
     const [isDark, setIsDark] = useState(() => localStorage.getItem("theme") === "dark");
     const [demoData, setDemoData] = useState([]);
 
+    const [loading, setLoading] = useState(false);
+
     const toggleTheme = () => setIsDark((prev) => !prev);
 
     // Apply dark/light class to <html> for Tailwind
@@ -30,25 +32,38 @@ export const ThemeProvider = ({ children }) => {
     //     setDemoData(places);
     // }, []);
 
-    const getlistingData = async () => {
+    const [pagination, setPagination] = useState({
+        currentPage: 1,
+        totalPages: 1,
+        totalListings: 0
+    });
+
+    const getlistingData = async (page = 1, limit = 8, search = "", category = "", country = "") => {
         try {
-            const response = await axios.get(backendurl + '/api/listing/list');
-            // console.log(response.data.listings.reviews);
+            setLoading(true);
+            const queryParams = new URLSearchParams({
+                page,
+                limit,
+                search,
+                category,
+                country
+            }).toString();
+
+            const response = await axios.get(`${backendurl}/api/listing/list?${queryParams}`);
+
             if (response.data.success) {
                 setDemoData(response.data.listings);
+                setPagination(response.data.pagination);
             }
             else {
                 toast.error('Product Not Found');
             }
         } catch (error) {
-            toast.error('Product Not Found');
+            toast.error('Failed to fetch listings');
+        } finally {
+            setLoading(false);
         }
     }
-
-
-
-
-
 
     useEffect(() => {
         getlistingData();
@@ -64,7 +79,7 @@ export const ThemeProvider = ({ children }) => {
     // console.log(demoData)
 
     return (
-        <ThemeContext.Provider value={{ isDark, toggleTheme, demoData, getlistingData }}>
+        <ThemeContext.Provider value={{ isDark, toggleTheme, demoData, getlistingData, loading, pagination }}>
             {children}
         </ThemeContext.Provider>
     );

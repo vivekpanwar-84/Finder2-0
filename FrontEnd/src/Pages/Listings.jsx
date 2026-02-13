@@ -3,11 +3,8 @@ import FeaturedPlaces from "../components/FeaturedPlaces"
 
 const Listings = () => {
     return (
-        <div >
-            <div className="pt-9">
-               
-                <FeaturedPlaces />
-            </div>
+        <div className="p-4 sm:p-6 lg:p-8">
+            <FeaturedPlaces />
         </div>
 
     )

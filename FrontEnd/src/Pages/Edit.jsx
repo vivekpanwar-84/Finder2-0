@@ -34,7 +34,9 @@ export default function EditListingForm() {
     useEffect(() => {
         const fetchListing = async () => {
             try {
-                const res = await axios.get(backendurl + `/api/listing/${listId}`);
+                const res = await axios.get(backendurl + `/api/listing/${listId}`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
                 const data = res.data;
                 setForm({
                     title: data.title,
@@ -118,7 +120,7 @@ export default function EditListingForm() {
                 }`}
         >
             <div className="max-w-4xl mx-auto mb-8 flex items-center gap-3">
-                <NavLink to="/listings">
+                <NavLink to={`/listing/${listId}`}>
                     <ArrowLeft size={22} className="text-gray-400 hover:text-blue-400 transition" />
                 </NavLink>
                 <h2 className="text-3xl font-bold">Edit Listing</h2>

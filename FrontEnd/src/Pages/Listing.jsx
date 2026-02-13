@@ -6,12 +6,13 @@ import { MapPin, Layers, Star, Earth, UserRoundPen } from "lucide-react";
 import Comment from "../components/Comment";
 import axios from "axios";
 import { toast } from "react-toastify";
-
+import Loader from "../components/Loader";
+import ConfirmModal from "../components/ConfirmModal";
 
 
 const Listing = () => {
   const { listId } = useParams();
-  const { demoData } = useContext(ThemeContext);
+  const { demoData, loading } = useContext(ThemeContext);
   const navigate = useNavigate();
   const [data, setData] = useState(null);
   const { isDark, getlistingData } = useTheme();
@@ -19,6 +20,7 @@ const Listing = () => {
   const [averageRating, setAverageRating] = useState(0);
   const [mainImage, setMainImage] = useState("");
   const backendurl = import.meta.env.VITE_BACKEND_URL;
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
 
   // Fetch the listing from demoData
@@ -74,15 +76,8 @@ const Listing = () => {
       />
     ));
 
-  if (!data) {
-    return (
-      <div
-        className={`min-h-screen flex items-center justify-center ${isDark ? "bg-gray-900 text-white" : "bg-white text-gray-900"
-          } text-gray-400`}
-      >
-        Loading listing...
-      </div>
-    );
+  if (loading || !data) {
+    return <Loader />;
   }
 
   return (
@@ -166,12 +161,24 @@ const Listing = () => {
                 <NavLink to={`/listing/${listId}/Edit`} className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
                   Edit  Now
                 </NavLink>
-                <button onClick={() => handleDelete(data._id)} className="mt-4 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">
+                <button onClick={() => setShowDeleteModal(true)} className="mt-4 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">
                   Delete Now
                 </button>
               </div>
             </div>
           ) : null}
+
+          <ConfirmModal
+            isOpen={showDeleteModal}
+            onClose={() => setShowDeleteModal(false)}
+            onConfirm={() => {
+              handleDelete(data._id);
+              setShowDeleteModal(false);
+            }}
+            title="Delete Listing?"
+            message="Are you sure you want to delete this listing? This action cannot be undone."
+            isDark={isDark}
+          />
 
 
 

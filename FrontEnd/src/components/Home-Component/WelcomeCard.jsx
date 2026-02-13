@@ -19,7 +19,7 @@ export default function WelcomeCard() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className={`mt-25  relative overflow-hidden rounded-3xl shadow-xl m-8 p-8 sm:p-7
+            className={`mt-6 relative overflow-hidden rounded-3xl shadow-xl mx-4 sm:mx-8 mb-8 p-8 sm:p-7
         ${isDark
                     ? "bg-gradient-to-r from-indigo-900 to-purple-900 text-white"
                     : "bg-gradient-to-r from-blue-400 to-purple-500 text-white"} 

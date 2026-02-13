@@ -7,14 +7,14 @@ export default function About() {
 
   return (
     <>
-      <div className="pt-9">
-        <div className=" w-full pt-15 h-50 text-center bg-gradient-to-r from-blue-600 to-purple-600 text-white">
-                    <span className="text-5xl font-bold ">About Finder.</span>
+      {/* <div className="p-4 sm:p-6 lg:p-8">
+        <div className=" w-full pt-15 h-50 text-center bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-3xl">
+          <span className="text-5xl font-bold ">About Finder.</span>
           <div className="">Access your travel community and continue discovering amazing places
             <div> shared by fellow travelers.</div>
           </div>
         </div>
-      </div>
+      </div> */}
       <section
 
         className={`  min-h-screen flex items-center justify-center px-4 py-10 transition-colors duration-500 ${isDark ? "bg-[#0b1120] text-white" : "bg-gray-50 text-gray-900"
@@ -29,7 +29,7 @@ export default function About() {
             : "bg-white border-gray-200"
             }`}
         >
-         
+
 
           {/* Icons Row */}
           <div className="flex justify-center gap-6 text-sm text-gray-400 mb-10">

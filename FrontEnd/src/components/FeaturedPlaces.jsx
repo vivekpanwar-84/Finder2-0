@@ -1,99 +1,76 @@
 import { motion } from "framer-motion";
-import { MapPin, MessageCircle, Star, ArrowRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import { useTheme } from "../context/ThemeContext";
 import Places from "./Places";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { ThemeContext } from '../context/ThemeContext'
-import { useState, useEffect } from "react";
-import { X } from "lucide-react";
-import Comment from './Comment'
+import { useSearchParams } from "react-router-dom";
+import Loader from "./Loader";
 
-export default function FeaturedPlaces1() {
-
+export default function FeaturedPlaces() {
     const { isDark } = useTheme();
-    const { demoData } = useContext(ThemeContext);
-    const [latestItem, setLatestItem] = useState([]);
-    const [search, setSearch] = useState("");
-    const [category, setCategory] = useState("");
-    const [country, setCountry] = useState("");
+    const { demoData, loading, pagination, getlistingData } = useContext(ThemeContext);
 
+    // URL Search Params for persistence
+    const [searchParams, setSearchParams] = useSearchParams();
+
+    // Derived state from URL or default to empty
+    const searchTerm = searchParams.get("search") || "";
+    const categoryFilter = searchParams.get("category") || "";
+    const countryFilter = searchParams.get("country") || "";
+    const currentPageParam = searchParams.get("page") || "1";
+
+    // Debounce search and handle filter changes
     useEffect(() => {
-        setLatestItem(demoData);
-    }, [demoData])
+        const timer = setTimeout(() => {
+            getlistingData(parseInt(currentPageParam), 8, searchTerm, categoryFilter, countryFilter);
+        }, 500); // 500ms debounce
 
-    // console.log(demoData.reviews);
+        return () => clearTimeout(timer);
+    }, [searchTerm, categoryFilter, countryFilter, currentPageParam]);
 
-
-    // Apply filters dynamically
-    useEffect(() => {
-        let filtered = demoData;
-
-        //  Filter by search
-        if (search.trim() !== "") {
-            filtered = filtered.filter((item) =>
-                item.title.toLowerCase().includes(search.toLowerCase()) ||
-                item.description.toLowerCase().includes(search.toLowerCase()) ||
-                item.country.toLowerCase().includes(search.toLowerCase()) ||
-                item.category.toLowerCase().includes(search.toLowerCase())
-            );
+    // Update URL params
+    const updateParams = (key, value) => {
+        const newParams = new URLSearchParams(searchParams);
+        if (value) {
+            newParams.set(key, value);
+        } else {
+            newParams.delete(key);
         }
 
-
-        // Filter by category
-        if (category !== "") {
-            filtered = filtered.filter(
-                (item) => item.category.toLowerCase() === category.toLowerCase()
-            );
+        // If searching or filtering, reset to page 1 (unless we are just changing the page)
+        if (key !== "page") {
+            newParams.set("page", "1");
         }
 
-        //Filter by country
-        if (country !== "") {
-            filtered = filtered.filter(
-                (item) => item.country.toLowerCase() === country.toLowerCase()
-            );
-        }
-
-        setLatestItem(filtered);
-    }, [search, category, country, demoData]);
-
-
-
-    const handleClear = () => {
-        setSearch("");
-        setCategory("");
-        setCountry("");
+        setSearchParams(newParams);
     };
 
-    // console.log("demo " + demoData);
-    console.log("list " + latestItem);
+    const handleClear = () => {
+        setSearchParams({});
+    };
+
+    if (loading) {
+        return <Loader />;
+    }
 
     return (
         <>
-            <div className=" w-full pt-15 h-50 text-center bg-gradient-to-r from-blue-600 to-purple-600 text-white">
-                <span className="text-5xl font-bold ">Explore Places</span>
-                <div className="">Discover amazing destinations, hidden gems, and unforgettable experiences
-                    <div> from around the world</div>
-                </div>
-            </div>
-            {/* <SearchFilterBar /> */}
-            <div className={`flex justify-center p-4 sm:p-6 ${isDark ? "bg-[#0a1120] text-white" : "bg-gray-50 text-gray-900"
-                } `}>
-                <div className={`flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full max-w-5xl  rounded-2xl px-4 py-4 shadow-md border ${isDark ? "bg-[#0a1120] text-white" : "bg-gray-50 text-gray-900"
-                    } transition-all duration-300`}>
+            <div className={`flex justify-center p-4 sm:p-6 ${isDark ? "bg-[#0a1120] text-white" : "bg-gray-50 text-gray-900"}`}>
+                <div className={`flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full max-w-5xl rounded-2xl px-4 py-4 shadow-md border ${isDark ? "bg-[#0a1120] text-white" : "bg-gray-50 text-gray-900"} transition-all duration-300`}>
                     {/* Search Input */}
                     <input
                         type="text"
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
+                        value={searchTerm}
+                        onChange={(e) => updateParams("search", e.target.value)}
                         placeholder="Search places by name or description..."
-                        className={`flex-1 ${isDark ? "bg-[#0a1120] text-white" : "bg-gray-50 text-gray-900"
-                            }  text-gray-300 placeholder-gray-500 text-sm px-4 py-2 rounded-lg border border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 w-full`}
+                        className={`flex-1 ${isDark ? "bg-[#0a1120] text-white" : "bg-gray-50 text-gray-900"} text-gray-300 placeholder-gray-500 text-sm px-4 py-2 rounded-lg border border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 w-full`}
                     />
 
                     {/* Category Dropdown */}
                     <select
-                        value={category}
-                        onChange={(e) => setCategory(e.target.value)}
+                        value={categoryFilter}
+                        onChange={(e) => updateParams("category", e.target.value)}
                         className="bg-white text-gray-700 text-sm px-3 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 w-full sm:w-40"
                     >
                         <option value="">Category</option>
@@ -115,8 +92,8 @@ export default function FeaturedPlaces1() {
 
                     {/* Country Dropdown */}
                     <select
-                        value={country}
-                        onChange={(e) => setCountry(e.target.value)}
+                        value={countryFilter}
+                        onChange={(e) => updateParams("country", e.target.value)}
                         className="bg-white text-gray-700 text-sm px-3 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-400 w-full sm:w-40"
                     >
                         <option value="">Country</option>
@@ -138,34 +115,25 @@ export default function FeaturedPlaces1() {
                 </div>
             </div>
 
-            {/* fillter End */}
-
-            <section
-                className={`py-1 px-8 transition-colors duration-500 ${isDark ? "bg-[#0a1120] text-white" : "bg-gray-50 text-gray-900"
-                    }`}
-            >
+            <section className={`py-1 px-8 transition-colors duration-500 ${isDark ? "bg-[#0a1120] text-white" : "bg-gray-50 text-gray-900"}`}>
                 {/* Header */}
                 <div className="flex items-center justify-between mb-8">
                     <div>
                         <h2 className="text-3xl font-bold">All Places</h2>
-                        <p className="text-gray-400">
-                            Discover the most popular destinations
-                        </p>
+                        <p className="text-gray-400">Discover the most popular destinations</p>
                     </div>
-
                 </div>
 
                 {/* Cards */}
-                {/* <Places /> */}
-                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-                    {latestItem.length > 0 ? (
-                        latestItem.map((item, index) => (
+                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-12">
+                    {demoData.length > 0 ? (
+                        demoData.map((item, index) => (
                             <Places
                                 key={index}
                                 id={item._id}
                                 image={item.image}
-                                author={item.owner.name || "Unknown"}
-                                comments={item.reviews.length || 0}
+                                author={item.owner?.name || "Unknown"}
+                                comments={item.reviews?.length || 0}
                                 description={item.description}
                                 country={item.country}
                                 rating={item.ratings}
@@ -180,8 +148,53 @@ export default function FeaturedPlaces1() {
                     )}
                 </div>
 
+                {/* Pagination Controls */}
+                {pagination && pagination.totalPages > 1 && (
+                    <div className="flex justify-center items-center gap-4 mt-8 pb-8">
+                        <button
+                            onClick={() => {
+                                if (pagination.currentPage > 1) {
+                                    updateParams("page", pagination.currentPage - 1);
+                                    window.scrollTo(0, 0);
+                                }
+                            }}
+                            disabled={pagination.currentPage === 1}
+                            className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${pagination.currentPage === 1
+                                ? "opacity-50 cursor-not-allowed text-gray-400"
+                                : isDark
+                                    ? "bg-gray-800 text-white hover:bg-gray-700"
+                                    : "bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 hover:text-blue-600"
+                                }`}
+                        >
+                            <ChevronLeft size={20} />
+                            Previous
+                        </button>
+
+                        <span className={`text-sm font-medium ${isDark ? "text-gray-400" : "text-gray-600"}`}>
+                            Page {pagination.currentPage} of {pagination.totalPages}
+                        </span>
+
+                        <button
+                            onClick={() => {
+                                if (pagination.currentPage < pagination.totalPages) {
+                                    updateParams("page", pagination.currentPage + 1);
+                                    window.scrollTo(0, 0);
+                                }
+                            }}
+                            disabled={pagination.currentPage === pagination.totalPages}
+                            className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-all ${pagination.currentPage === pagination.totalPages
+                                ? "opacity-50 cursor-not-allowed text-gray-400"
+                                : isDark
+                                    ? "bg-gray-800 text-white hover:bg-gray-700"
+                                    : "bg-white text-gray-700 border border-gray-200 hover:bg-gray-50 hover:text-blue-600"
+                                }`}
+                        >
+                            Next
+                            <ChevronRight size={20} />
+                        </button>
+                    </div>
+                )}
             </section>
-            {/* <Comment listingId={latestItem[7]._id} currentUserId={currentUserId} /> */}
         </>
     );
 }

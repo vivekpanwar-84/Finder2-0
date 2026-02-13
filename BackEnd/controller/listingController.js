@@ -84,22 +84,53 @@ const addListing = async (req, res) => {
 
 
 const list = async (req, res) => {
-
     try {
-        // const listings = await listingModel.find({});
-        // const listings = await listingModel.find({}).populate('reviews', 'rating');
-        const listings = await listingModel.find()   // fetch all listings
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 8;
+        const skip = (page - 1) * limit;
+
+        const { search, category, country } = req.query;
+
+        let query = {};
+
+        if (search) {
+            query.$or = [
+                { title: { $regex: search, $options: "i" } },
+                { description: { $regex: search, $options: "i" } },
+                { location: { $regex: search, $options: "i" } }
+            ];
+        }
+
+        if (category) {
+            query.category = category;
+        }
+
+        if (country) {
+            query.country = country;
+        }
+
+        const totalListings = await listingModel.countDocuments(query);
+        const totalPages = Math.ceil(totalListings / limit);
+
+        const listings = await listingModel.find(query)
+            .skip(skip)
+            .limit(limit)
             .populate({
                 path: "reviews",
                 populate: { path: "author" }
             })
             .populate("owner");
 
-
-
-
-        // console.log(listings);
-        res.json({ success: true, listings });
+        res.json({
+            success: true,
+            listings,
+            pagination: {
+                totalListings,
+                totalPages,
+                currentPage: page,
+                limit
+            }
+        });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }
@@ -197,8 +228,18 @@ const editListing = async (req, res) => {
     }
 };
 
+const userListings = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const listings = await listingModel.find({ owner: userId });
+        res.status(200).json({ success: true, listings });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+}
+
 export default editListing;
 
 
 
-export { addListing, list, deleteListing, singleListing, editListing };
+export { addListing, list, deleteListing, singleListing, editListing, userListings };

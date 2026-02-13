@@ -8,19 +8,13 @@ const Home = () => {
 
     const { isDark } = useTheme();
     return (
-        <div className={`min-h-screen transition-colors duration-500 ${isDark ? "bg-gray-900 text-white" : "bg-white text-gray-900"
-            }`} >
-            <div >
-                <div className="pt-1">
-                    <WelcomeCard />
-                    <StatsCards />
-                    <QuickActions />
-                    <HomePlaces />
-                </div>
+        <div className="min-h-screen">
+            <div className="p-4 sm:p-6 lg:p-8">
+                <WelcomeCard />
+                <StatsCards />
+                <QuickActions />
+                <HomePlaces />
             </div>
-
-
-
         </div>
     )
 }

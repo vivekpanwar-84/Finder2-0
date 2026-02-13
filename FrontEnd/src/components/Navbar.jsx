@@ -2,176 +2,148 @@ import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
 import { useAuth } from "../context/AuthContext";
-import { Sun, Moon, Menu, MapPinPlus } from "lucide-react";
+import { Sun, Moon, Menu, X, LogOut, LogIn, Home, List, Info, PlusCircle, Settings } from "lucide-react";
 
 const Navbar = () => {
     const [visible, setVisible] = useState(false);
     const { isDark, toggleTheme } = useTheme();
     const { isAuthenticated, logout } = useAuth();
 
-    // const navigate = useNavigate();
 
     const handleLogout = () => {
         logout();
-        // navigate("/login");
+        setVisible(false);
     };
 
+    const navItems = [
+        { name: "Home", icon: Home, path: "/" },
+        { name: "Listing", icon: List, path: "/listing" },
+        { name: "AddNewPlace", icon: PlusCircle, path: "/addnewplace" },
+        { name: "About", icon: Info, path: "/about" },
+    ];
 
     return (
-        <nav
-            className={`fixed  top-0 left-0 w-full z-50 flex  items-center justify-between py-4 px-6 sm:px-10 font-medium transition-colors duration-300 
-        ${isDark ? "bg-gray-900 border-b-1 border-gray-600 text-white" : "bg-white text-gray-900 border-b-1 border-gray-500"}
-      `}
-        >
-            {/* Brand */}
-            <NavLink to="/" className="text-3xl text-blue-400 font-bold cursor-pointer">
-                FINDER<span className="text-blue-400 cursor-pointer">.</span>
-            </NavLink>
-
-
-
-            {/* Desktop Menu */}
-            <ul className="hidden sm:flex gap-8 text-sm">
-                {["Home", "Listing", "About", "AddNewPlace"].map((item, idx) => (
-                    <NavLink
-                        key={idx}
-                        to={item === "Home" ? "/" : `/${item.toLowerCase()}`}
-                        className={({ isActive }) =>
-                            `flex flex-col items-center gap-1 transition ${isActive ? "text-blue-500" : "hover:text-blue-500"
-                            }`
-                        }
-                    >
-                        {/* {
-                            item === "addNewPlace" ? <MapPinPlus className="w-3 h-5" /> : <p>{item}</p>
-                    } */}
-                        <p>{item}</p>
-                        <hr className="w-2/4 border-none h-[1.5px] bg-blue-500 hidden group-hover:block" />
-                    </NavLink>
-                ))}
-            </ul>
-
-            {/* Right Buttons */}
-            <div className="hidden sm:flex items-center gap-4">
-                {/* Theme Toggle */}
-                <button
-                    onClick={toggleTheme}
-                    className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-400 transition"
-                >
-                    {isDark ? (
-                        <Sun className="w-5 h-5 text-yellow-300 cursor-pointer" />
-                    ) : (
-                        <Moon className="w-5 h-5 text-gray-800 cursor-pointer" />
-                    )}
+        <>
+            {/* Mobile Header */}
+            <div className={`sm:hidden fixed top-0 left-0 w-full z-50 flex items-center justify-between px-6 py-4 shadow-md transition-colors duration-300 ${isDark ? "bg-gray-900 text-white border-b border-gray-700" : "bg-white text-gray-900 border-b border-gray-200"}`}>
+                <NavLink to="/" className="text-2xl font-bold text-blue-500">
+                    FINDER.
+                </NavLink>
+                <button onClick={() => setVisible(true)} className="p-2">
+                    <Menu className="w-6 h-6" />
                 </button>
-
-                {/* Login Button */}
-                {isAuthenticated ? (
-                    <button
-                        onClick={handleLogout}
-                        className="px-5 py-2 border border-gray-600 rounded hover:bg-black hover:text-white transition cursor-pointer"
-                    >
-                        Logout
-                    </button>
-                ) : (
-                    <>
-                        <NavLink
-                            to="/login"
-                            className="px-5 py-2 border border-gray-600 rounded hover:bg-black hover:text-white transition cursor-pointer"
-                        >
-                            SignIn
-                        </NavLink>
-                        <NavLink to="/login" className={` px-5 py-2 ${isDark ? "bg-red-700 text-white" : ""}
-
-                     border border-gray-600  rounded hover:bg-gray-700 hover:text-white transition cursor-pointer`}>
-                            SignUp
-                        </NavLink>
-                    </>
-                )}
-
-
-
-                {/* Mobile Menu Icon */}
-
             </div>
 
+            {/* Sidebar (Desktop & Mobile Drawer) */}
+            <div className={`fixed top-0 left-0 h-full z-50 w-64 transform transition-transform duration-300 ease-in-out shadow-xl flex flex-col justify-between
+                ${isDark ? "bg-gray-900 text-white border-r border-gray-700" : "bg-white text-gray-900 border-r border-gray-200"}
+                ${visible ? "translate-x-0" : "-translate-x-full sm:translate-x-0"}
+            `}>
 
-            <Menu
-                className="cursor-pointer text-xl sm:hidden"
-                onClick={() => setVisible(true)}
-            />
-            {/* Sidebar Menu (Mobile) */}
-            <div
-                className={`fixed top-0 right-0 h-full w-64 z-50 transform transition-transform duration-300 ease-in-out shadow-xl 
-          ${isDark ? "bg-gray-900 text-white" : "bg-white text-gray-800"} 
-          ${visible ? "translate-x-0" : "translate-x-full"}
-        `}
-            >
-
-
-                <div className="flex flex-col h-full p-5">
-                    <div className="flex justify-between items-center ">
-
-                        <button
-                            onClick={toggleTheme}
-                            className=" rounded-full hover:bg-gray-200 dark:hover:bg-gray-400 transition"
-                        >
-                            {isDark ? (
-                                <Sun className="w-5 h-5 text-yellow-300 cursor-pointer" />
-                            ) : (
-                                <Moon className="w-5 h-5 text-gray-800 cursor-pointer" />
-                            )}
-                        </button>
-                        <button
-                            className="self-end text-2xl mb-6"
-                            onClick={() => setVisible(false)}
-                        >
-                            ✕
+                {/* Top Section */}
+                <div className="p-6">
+                    <div className="flex items-center justify-between mb-8">
+                        <NavLink to="/" className="text-3xl font-bold text-blue-500">
+                            FINDER.
+                        </NavLink>
+                        {/* Close Button for Mobile */}
+                        <button onClick={() => setVisible(false)} className="sm:hidden p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700">
+                            <X className="w-6 h-6" />
                         </button>
                     </div>
 
-
-
-                    {["Home", "Listings", "AddNewPlace", "About", "Contacts",].map((item, idx) => (
-                        <NavLink
-                            key={idx}
-                            to={item === "Home" ? "/" : `/${item.toLowerCase()}`}
-                            className="py-2 hover:text-blue-500"
-                            onClick={() => setVisible(false)}
-                        >
-                            {item}
-                        </NavLink>
-                    ))}
-                    {isAuthenticated ? (
-                        <p
-                            onClick={handleLogout}
-                            className="py-2 hover:text-blue-500"
-                        >
-                            Logout
-                        </p>
-                    ) : (
-                        <>
+                    {/* Navigation Links */}
+                    <nav className="flex flex-col gap-2">
+                        {navItems.map((item, idx) => (
                             <NavLink
-                                to="/login"
-                                className="py-2 hover:text-blue-500"
+                                key={idx}
+                                to={item.path}
+                                onClick={() => setVisible(false)}
+                                className={({ isActive }) =>
+                                    `px-4 py-3 rounded-xl text-base font-medium transition-all duration-200 flex items-center gap-3 group
+                                    ${isActive
+                                        ? "bg-blue-600 text-white shadow-lg shadow-blue-500/30 translate-x-1"
+                                        : "text-gray-700 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-100 hover:translate-x-1"
+                                    }`
+                                }
                             >
-                                Login
+                                <item.icon className="w-5 h-5" />
+                                {item.name}
                             </NavLink>
-                            {/* <NavLink to="/login" className="py-2 hover:text-blue-500">
-                            SignUp
-                        </NavLink> */}
-                        </>
-                    )}
+                        ))}
+                    </nav>
+                </div>
+
+                {/* Bottom Section */}
+                <div className="p-6 border-t border-gray-200 dark:border-gray-700">
+                    <div className="flex flex-col gap-4">
+                        {/* Settings / Profile */}
+                        {isAuthenticated && (
+                            <NavLink
+                                to="/profile"
+                                onClick={() => setVisible(false)}
+                                className={({ isActive }) =>
+                                    `flex items-center gap-3 px-4 py-3 rounded-lg transition-all font-medium
+                                ${isActive
+                                        ? "bg-blue-600 text-white shadow-lg shadow-blue-500/30"
+                                        : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white"
+                                    }`
+                                }
+                            >
+                                <Settings className="w-5 h-5" />
+                                <span>Settings</span>
+                            </NavLink>
+                        )}
+
+                        {/* Theme Toggle */}
+                        <button
+                            onClick={toggleTheme}
+                            className="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-all text-gray-600 dark:text-gray-300 font-medium"
+                        >
+                            {isDark ? <Sun className="w-5 h-5 text-yellow-400" /> : <Moon className="w-5 h-5 text-gray-600" />}
+                            <span>{isDark ? "Light Mode" : "Dark Mode"}</span>
+                        </button>
+
+                        {/* Auth Buttons */}
+                        {isAuthenticated ? (
+                            <button
+                                onClick={handleLogout}
+                                className="flex items-center gap-3 px-4 py-3 w-full rounded-lg bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all font-medium"
+                            >
+                                <LogOut className="w-5 h-5" />
+                                <span>Logout</span>
+                            </button>
+                        ) : (
+                            <div className="flex flex-col gap-2">
+                                <NavLink
+                                    to="/login"
+                                    onClick={() => setVisible(false)}
+                                    className="flex items-center justify-center gap-2 px-4 py-2 w-full rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all"
+                                >
+                                    <LogIn className="w-4 h-4" />
+                                    <span>Sign In</span>
+                                </NavLink>
+                                <NavLink
+                                    to="/login"
+                                    onClick={() => setVisible(false)}
+                                    className="flex items-center justify-center gap-2 px-4 py-2 w-full rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-all shadow-md"
+                                >
+                                    <span>Sign Up</span>
+                                </NavLink>
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
 
-            {/* Overlay when sidebar is open */}
+            {/* Overlay for Mobile */}
             {visible && (
                 <div
-                    className="fixed inset-0 bg-black/40 z-40"
+                    className="fixed inset-0 bg-black/50 z-40 sm:hidden backdrop-blur-sm"
                     onClick={() => setVisible(false)}
                 ></div>
             )}
-        </nav>
+        </>
     );
 };
 
