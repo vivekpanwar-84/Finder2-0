@@ -85,40 +85,40 @@ const Profile = () => {
 
                 {profileData ? (
                     <>
-                        <div className={`rounded-2xl p-8 shadow-lg mb-10 ${isDark ? "bg-[#141b2a]" : "bg-white"}`}>
-                            <div className="flex flex-col md:flex-row gap-8 items-center md:items-start">
+                        <div className={`rounded-2xl p-6 sm:p-8 shadow-lg mb-8 sm:mb-10 ${isDark ? "bg-[#141b2a]" : "bg-white"}`}>
+                            <div className="flex flex-col md:flex-row gap-6 sm:gap-8 items-center md:items-start">
                                 {/* Avatar Placeholder */}
-                                <div className="w-32 h-32 rounded-full bg-gradient-to-tr from-blue-500 to-purple-500 flex items-center justify-center text-4xl font-bold text-white shadow-xl">
+                                <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-gradient-to-tr from-blue-500 to-purple-500 flex items-center justify-center text-3xl sm:text-4xl font-bold text-white shadow-xl shrink-0">
                                     {profileData.name ? profileData.name.charAt(0).toUpperCase() : <User />}
                                 </div>
 
                                 {/* Info */}
                                 <div className="flex-1 w-full text-center md:text-left">
-                                    <h2 className="text-2xl font-bold mb-2">{profileData.name}</h2>
+                                    <h2 className="text-2xl sm:text-3xl font-bold mb-2">{profileData.name}</h2>
                                     <p className={`text-sm mb-6 ${isDark ? "text-gray-400" : "text-gray-500"}`}>
                                         Member since {new Date(profileData.createdAt || Date.now()).toLocaleDateString()}
                                     </p>
 
                                     <div className="grid gap-4 max-w-md mx-auto md:mx-0">
-                                        <div className={`flex items-center gap-3 p-3 rounded-lg ${isDark ? "bg-gray-800/50" : "bg-gray-50"}`}>
+                                        <div className={`flex items-center justify-center md:justify-start gap-3 p-3 rounded-lg ${isDark ? "bg-gray-800/50" : "bg-gray-50"}`}>
                                             <Mail className="text-blue-500 w-5 h-5" />
-                                            <span>{profileData.email}</span>
+                                            <span className="truncate">{profileData.email}</span>
                                         </div>
                                     </div>
 
-                                    <div className="flex gap-6 mt-6 text-center md:text-left">
+                                    <div className="flex gap-8 mt-6 justify-center md:justify-start">
                                         <div
-                                            className="cursor-pointer hover:text-blue-500 transition"
+                                            className="cursor-pointer hover:text-blue-500 transition group"
                                             onClick={() => setShowFollowers(true)}
                                         >
-                                            <span className="font-bold text-xl block">{profileData.followers?.length || 0}</span>
+                                            <span className="font-bold text-xl sm:text-2xl block group-hover:scale-110 transition-transform">{profileData.followers?.length || 0}</span>
                                             <span className="text-sm text-gray-500">Followers</span>
                                         </div>
                                         <div
-                                            className="cursor-pointer hover:text-blue-500 transition"
+                                            className="cursor-pointer hover:text-blue-500 transition group"
                                             onClick={() => setShowFollowing(true)}
                                         >
-                                            <span className="font-bold text-xl block">{profileData.following?.length || 0}</span>
+                                            <span className="font-bold text-xl sm:text-2xl block group-hover:scale-110 transition-transform">{profileData.following?.length || 0}</span>
                                             <span className="text-sm text-gray-500">Following</span>
                                         </div>
                                     </div>
@@ -126,7 +126,7 @@ const Profile = () => {
                                     <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
                                         <NavLink
                                             to="/addnewplace"
-                                            className="flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition shadow-lg shadow-blue-500/20"
+                                            className="flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:shadow-lg hover:shadow-blue-500/30 transition transform hover:-translate-y-0.5"
                                         >
                                             <PlusCircle size={20} />
                                             Add New Place

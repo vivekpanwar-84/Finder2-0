@@ -26,18 +26,18 @@ const Navbar = () => {
     return (
         <>
             {/* Mobile Header */}
-            <div className={`sm:hidden fixed top-0 left-0 w-full z-50 flex items-center justify-between px-6 py-4 shadow-md transition-colors duration-300 ${isDark ? "bg-gray-900 text-white border-b border-gray-700" : "bg-white text-gray-900 border-b border-gray-200"}`}>
-                <NavLink to="/" className="text-2xl font-bold text-blue-500">
+            <div className={`sm:hidden fixed top-0 left-0 w-full z-50 flex items-center justify-between px-6 py-4 shadow-sm transition-all duration-300 backdrop-blur-md ${isDark ? "bg-gray-900/80 text-white border-b border-gray-700/50" : "bg-white/80 text-gray-900 border-b border-gray-200/50"}`}>
+                <NavLink to="/" className="text-2xl font-bold bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">
                     FINDER.
                 </NavLink>
-                <button onClick={() => setVisible(true)} className="p-2">
+                <button onClick={() => setVisible(true)} className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition">
                     <Menu className="w-6 h-6" />
                 </button>
             </div>
 
             {/* Sidebar (Desktop & Mobile Drawer) */}
-            <div className={`fixed top-0 left-0 h-full z-50 w-64 transform transition-transform duration-300 ease-in-out shadow-xl flex flex-col justify-between
-                ${isDark ? "bg-gray-900 text-white border-r border-gray-700" : "bg-white text-gray-900 border-r border-gray-200"}
+            <div className={`fixed top-0 left-0 h-full z-50 w-64 transform transition-transform duration-300 ease-in-out shadow-2xl flex flex-col justify-between backdrop-blur-xl
+                ${isDark ? "bg-gray-900/95 text-white border-r border-gray-700/50" : "bg-white/95 text-gray-900 border-r border-gray-200/50"}
                 ${visible ? "translate-x-0" : "-translate-x-full sm:translate-x-0"}
             `}>
 

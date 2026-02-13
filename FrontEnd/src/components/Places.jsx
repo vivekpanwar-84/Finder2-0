@@ -18,14 +18,14 @@ const Places = ({ id, image, author, comments, description, country, rating, cat
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, delay: 0 }}
                     whileHover={{
-                        scale: 1.03,
-                        y: -6,
-                        boxShadow: "0 10px 25px rgba(0,0,0,0.3)",
+                        scale: 1.02,
+                        y: -5,
+                        boxShadow: isDark ? "0 20px 40px -15px rgba(0,0,0,0.5)" : "0 20px 40px -15px rgba(59, 130, 246, 0.15)",
                     }}
-                    className={`rounded-2xl overflow-hidden shadow-lg border ${isDark
-                        ? "bg-[#141b2a] border-[#2a3550]/40"
-                        : "bg-white border-blue-100"
-                        } transition-all duration-300`}
+                    className={`rounded-2xl overflow-hidden shadow-sm hover:shadow-xl border ${isDark
+                        ? "bg-[#141b2a] border-gray-800"
+                        : "bg-white border-white shadow-blue-500/5"
+                        } transition-all duration-300 group`}
                 >
                     {/* Image */}
                     <div className="relative">
