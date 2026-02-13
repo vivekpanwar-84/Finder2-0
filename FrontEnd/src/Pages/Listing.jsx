@@ -21,6 +21,8 @@ const Listing = () => {
   const [mainImage, setMainImage] = useState("");
   const backendurl = import.meta.env.VITE_BACKEND_URL;
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [followLoading, setFollowLoading] = useState(false);
 
 
   // Fetch the listing from demoData
@@ -41,6 +43,55 @@ const Listing = () => {
       setAverageRating(0);
     }
   }, [data]);
+
+  // Check if current user is following the listing owner
+  useEffect(() => {
+    const checkFollowStatus = async () => {
+      if (user && data?.owner?._id) {
+        try {
+          const res = await axios.get(backendurl + '/api/user/profile', {
+            headers: { Authorization: `Bearer ${token}` }
+          });
+          if (res.data.success) {
+            const isFound = res.data.user.following.some(id => id === data.owner._id || id._id === data.owner._id);
+            setIsFollowing(isFound);
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      }
+    };
+    if (token) checkFollowStatus();
+  }, [user, data, token, backendurl]);
+
+  const handleFollow = async () => {
+    if (!user) {
+      toast.error("Please login to follow");
+      navigate("/login");
+      return;
+    }
+    if (user._id === data.owner._id) {
+      toast.error("You cannot follow yourself");
+      return;
+    }
+    try {
+      setFollowLoading(true);
+      const endpoint = isFollowing ? 'unfollow' : 'follow';
+      const res = await axios.post(`${backendurl}/api/user/${endpoint}/${data.owner._id}`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.data.success) {
+        setIsFollowing(!isFollowing);
+        toast.success(res.data.message);
+      } else {
+        toast.error(res.data.message);
+      }
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Something went wrong");
+    } finally {
+      setFollowLoading(false);
+    }
+  };
 
 
   const handleDelete = async (deleteId) => {
@@ -151,6 +202,19 @@ const Listing = () => {
             <span className="flex items-center gap-1">
               <UserRoundPen size={16} className="text-blue-400" /> {data.owner.name || "Unknown"}
             </span>
+            {/* Follow Button */}
+            {data.owner && user?._id !== data.owner._id && (
+              <button
+                onClick={handleFollow}
+                disabled={followLoading}
+                className={`ml-4 px-3 py-1 text-xs rounded-full border transition ${isFollowing
+                  ? "bg-transparent border-blue-500 text-blue-500 hover:bg-red-50 hover:text-red-500 hover:border-red-500"
+                  : "bg-blue-500 border-blue-500 text-white hover:bg-blue-600"
+                  }`}
+              >
+                {followLoading ? "Processing..." : isFollowing ? "Unfollow" : "Follow"}
+              </button>
+            )}
           </div>
           {/* 📝 Description */}
           <p className="mt-6 overflow-auto leading-relaxed max-w-3xl">{data.description}</p>

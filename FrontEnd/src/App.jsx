@@ -2,6 +2,7 @@ import React from 'react'
 import Navbar from './components/Navbar'
 import { Route, Routes } from 'react-router-dom'
 import Home from './Pages/Home'
+import Chat from './Pages/Chat'
 import About from './Pages/About'
 import Listing from './Pages/Listing'
 import Listings from './Pages/Listings'
@@ -35,6 +36,7 @@ const MainApp = () => {
       <div className={`flex-1 w-full sm:ml-64 min-h-screen pt-20 sm:pt-0 transition-all duration-300 ${isDark ? "bg-gray-900 text-white" : "bg-gray-50 text-gray-900"}`}>
         <Routes>
           <Route path='/' element={<Home />} />
+          <Route path='/chat' element={<Chat />} />
           <Route path='/listing' element={<Listings />} />
           <Route path='/about' element={<About />} />
           <Route path='/edit' element={<EditListing />} />

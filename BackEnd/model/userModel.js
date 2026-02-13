@@ -18,6 +18,14 @@ const userSchema = new mongoose.Schema({
         type: Object,
         default: {},
     },
+    followers: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+    }],
+    following: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+    }],
 
 }, { minimize: false });
 // { minimize: false } is used to store empty objects in MongoDB

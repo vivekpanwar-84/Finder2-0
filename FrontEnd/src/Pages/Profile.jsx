@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
-import { User, Mail, PlusCircle, Edit, Trash2 } from 'lucide-react';
+import { User, Mail, PlusCircle, Edit, Trash2, MessageCircle, UserMinus } from 'lucide-react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Loader from '../components/Loader';
@@ -16,6 +16,8 @@ const Profile = () => {
     const [loading, setLoading] = useState(true);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [listingToDelete, setListingToDelete] = useState(null);
+    const [showFollowers, setShowFollowers] = useState(false);
+    const [showFollowing, setShowFollowing] = useState(false);
     const backendurl = import.meta.env.VITE_BACKEND_URL;
 
     const navigate = useNavigate();
@@ -104,6 +106,23 @@ const Profile = () => {
                                         </div>
                                     </div>
 
+                                    <div className="flex gap-6 mt-6 text-center md:text-left">
+                                        <div
+                                            className="cursor-pointer hover:text-blue-500 transition"
+                                            onClick={() => setShowFollowers(true)}
+                                        >
+                                            <span className="font-bold text-xl block">{profileData.followers?.length || 0}</span>
+                                            <span className="text-sm text-gray-500">Followers</span>
+                                        </div>
+                                        <div
+                                            className="cursor-pointer hover:text-blue-500 transition"
+                                            onClick={() => setShowFollowing(true)}
+                                        >
+                                            <span className="font-bold text-xl block">{profileData.following?.length || 0}</span>
+                                            <span className="text-sm text-gray-500">Following</span>
+                                        </div>
+                                    </div>
+
                                     <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
                                         <NavLink
                                             to="/addnewplace"
@@ -171,6 +190,95 @@ const Profile = () => {
                             message="Are you sure you want to delete this listing? This action cannot be undone."
                             isDark={isDark}
                         />
+
+                        {/* Followers Modal */}
+                        {showFollowers && (
+                            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+                                <div className={`w-full max-w-md rounded-2xl shadow-xl ${isDark ? "bg-[#141b2a] text-white" : "bg-white text-gray-900"} overflow-hidden`}>
+                                    <div className="flex justify-between items-center p-4 border-b dark:border-gray-700">
+                                        <h3 className="font-bold text-lg">Followers</h3>
+                                        <button onClick={() => setShowFollowers(false)} className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">✕</button>
+                                    </div>
+                                    <div className="p-4 max-h-96 overflow-y-auto">
+                                        {profileData.followers?.length > 0 ? (
+                                            <div className="space-y-4">
+                                                {profileData.followers.map(follower => (
+                                                    <div key={follower._id} className="flex items-center justify-between gap-3">
+                                                        <div className="flex items-center gap-3">
+                                                            <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400 font-bold">
+                                                                {follower.name?.charAt(0).toUpperCase()}
+                                                            </div>
+                                                            <div>
+                                                                <p className="font-medium">{follower.name}</p>
+                                                                <p className="text-xs text-gray-500">{follower.email}</p>
+                                                            </div>
+                                                        </div>
+                                                        <button
+                                                            onClick={() => navigate(`/chat?userId=${follower._id}`)}
+                                                            className="p-2 text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-full"
+                                                            title="Message"
+                                                        >
+                                                            <MessageCircle size={18} />
+                                                        </button>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        ) : (
+                                            <p className="text-center text-gray-500 py-4">No followers yet.</p>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Following Modal */}
+                        {showFollowing && (
+                            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+                                <div className={`w-full max-w-md rounded-2xl shadow-xl ${isDark ? "bg-[#141b2a] text-white" : "bg-white text-gray-900"} overflow-hidden`}>
+                                    <div className="flex justify-between items-center p-4 border-b dark:border-gray-700">
+                                        <h3 className="font-bold text-lg">Following</h3>
+                                        <button onClick={() => setShowFollowing(false)} className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300">✕</button>
+                                    </div>
+                                    <div className="p-4 max-h-96 overflow-y-auto">
+                                        {profileData.following?.length > 0 ? (
+                                            <div className="space-y-4">
+                                                {profileData.following.map(following => (
+                                                    <div key={following._id} className="flex items-center justify-between gap-3">
+                                                        <div className="flex items-center gap-3">
+                                                            <div className="w-10 h-10 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-purple-600 dark:text-purple-400 font-bold">
+                                                                {following.name?.charAt(0).toUpperCase()}
+                                                            </div>
+                                                            <div>
+                                                                <p className="font-medium">{following.name}</p>
+                                                                <p className="text-xs text-gray-500">{following.email}</p>
+                                                            </div>
+                                                        </div>
+                                                        <div className="flex gap-2">
+                                                            <button
+                                                                onClick={() => navigate(`/chat?userId=${following._id}`)}
+                                                                className="p-2 text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-full"
+                                                                title="Message"
+                                                            >
+                                                                <MessageCircle size={18} />
+                                                            </button>
+                                                            <button
+                                                                onClick={() => handleUnfollow(following._id)}
+                                                                className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-full"
+                                                                title="Unfollow"
+                                                            >
+                                                                <UserMinus size={18} />
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        ) : (
+                                            <p className="text-center text-gray-500 py-4">Not following anyone yet.</p>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
 
                     </>
                 ) : (

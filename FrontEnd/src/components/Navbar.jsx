@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
 import { useAuth } from "../context/AuthContext";
-import { Sun, Moon, Menu, X, LogOut, LogIn, Home, List, Info, PlusCircle, Settings } from "lucide-react";
+import { Sun, Moon, Menu, X, LogOut, LogIn, Home, List, Info, PlusCircle, Settings, MessageCircle } from "lucide-react";
 
 const Navbar = () => {
     const [visible, setVisible] = useState(false);
@@ -20,6 +20,7 @@ const Navbar = () => {
         { name: "Listing", icon: List, path: "/listing" },
         { name: "AddNewPlace", icon: PlusCircle, path: "/addnewplace" },
         { name: "About", icon: Info, path: "/about" },
+        { name: "Chat", icon: MessageCircle, path: "/chat" },
     ];
 
     return (
